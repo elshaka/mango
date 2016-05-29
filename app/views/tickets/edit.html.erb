@@ -1,0 +1,83 @@
+<% title "Editar ticket" %>
+<%= form_for @ticket, :url=>edit_ticket_path(@ticket), :html=>{:method=>:post, :id=>'ticket_edit_form'} do |f| %>
+<%= render_error_messages(f.error_messages) %>
+<label for="ticket_type_id" class="small">Tipo de ticket:</label>
+<div class="field"><%=h @ticket.ticket_type.description %></div>
+<label for="client_id" class="small">Cliente/Maquila:</label>
+<div class="field"><%= f.collection_select :client_id, @clients, :id, :to_collection_select, {}, class: 'chosen-select chzn-field-normal' %> <span>*</span></div>
+<label for="driver_id" class="small">Chofer:</label>
+<div class="field"><%= f.collection_select :driver_id, @drivers, :id, :to_collection_select, {}, class: 'chosen-select chzn-field-normal' %> <span>*</span></div>
+<label for="truck_id" class="small">Camión:</label>
+<div class="field"><%= f.collection_select :truck_id, @trucks, :id, :to_collection_select, {}, class: 'chosen-select chzn-field-normal' %> <span>*</span></div>
+<label for="incoming_date" class="small">Fecha entrada:</label>
+<div class="field"><%=h @ticket.incoming_date.strftime("%d/%m/%Y %H:%M:%S") %></div>
+
+<label for="incoming_weight" class="small">Peso de entrada:</label>
+<div class="field"><%=h @ticket.incoming_weight %></div>
+<label for="incoming_weight" class="small">Peso de salida:</label>
+<div class="field"><%=f.text_field :outgoing_weight, :size=>'20' %><span>*</span></div>
+<% if @ticket.ticket_type_id == 1 %>
+  <label for="provider_weight" class="small">Peso Proveedor:</label>
+  <div class="field"><%= f.text_field :provider_weight, :size=>'20' %><span>*</span></div>
+  <label for="provider_document_number" class="small">N# documento SADA:</label>
+  <div class="field"><%= f.text_field :provider_document_number, :size=>'20' %><span>*</span></div>
+<% end %>
+<label for="address" class="small">Direccion:</label>
+<div class="field"><%= f.text_field :address, :size=>'90' %><span>*</span></div>
+<label for="comment" class="small">Comentario;</label>
+<div class="field"><%= f.text_area :comment, :size=>'85x3' %></div>
+<div class="clearfix"></div>
+<br/><span class="required">* Campos obligatorios</span>
+<h5>Transacciones</h5>
+<% i = 0 %>
+<div id="lot_parameters_grid">
+  <table id="tabledata">
+    <thead>
+      <tr>
+        <th>Lote<span class="order_arrow"></span></th>
+        <th>Sacos<span class="order_arrow"></span></th>
+        <th>Num. Sacos<span class="order_arrow"></span></th>
+        <th>Kg/Saco<span class="order_arrow"></span></th>
+        <th>Cantidad<span class="order_arrow"></span></th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= f.fields_for :transactions do |builder| %>
+        <% class_row, i = alternate_row_class(i) %>
+        <% t = builder.object %>
+        <tr class="<%= class_row %>">
+          <td>
+            <% if t.new_record? %>
+              <%= builder.radio_button :content_type, "1" %> Materia Prima <%= builder.radio_button :content_type, "2" %> Producto terminado
+              <br />
+              <%= builder.collection_select :content_id, t.content_type == 1 ? @lots : @product_lots, :id, :to_collection_select, {}, class: 'chosen-select chzn-field-normal' %>
+            <% else %>
+              <%= builder.hidden_field :content_id %><%= t.get_lot.to_collection_select %>
+            <% end %>
+          </td>
+          <td class="center"><%= builder.check_box :sack, class: 'sack_checkbox' %></td>
+          <td class="center"><%= builder.text_field :sacks, size: 5, class: 'sacks_field' %></td>
+          <td class="center"><%= builder.text_field :sack_weight, size: 5, class: 'sack_weight_field' %></td>
+          <td class="center"><%= builder.text_field :amount, size: 10, class: 'amount_field' %></td>
+          <td class="center">
+            <%= builder.hidden_field :_destroy %>
+            <%= link_to_function image_tag('action-delete.png', :alt=>'Eliminar') + " Eliminar", "remove_fields(this)" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="center">
+        <%= link_to_add_fields image_tag('action-new.png', :alt=>' Agregar') +" Agregar", f, :transactions %>
+      </td>
+    </tfoot>
+  </table>
+</div>
+<br/>
+<% end %>

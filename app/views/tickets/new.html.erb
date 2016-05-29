@@ -1,0 +1,23 @@
+<% title "Nuevo ticket" %>
+<%= form_for :ticket, :url=>new_ticket_path, :html=>{:id=>'ticket_new_form'} do |f| %>
+<%= render_error_messages(f.error_messages) %>
+<label for="ticket_type_id" class="small">Tipo de ticket:</label>
+<div>
+  <%= f.radio_button :ticket_type_id, 1, :checked => true %> Recepción
+  <%= f.radio_button :ticket_type_id, 2%> Despacho<br/><br/></div>
+
+<label for="client_id" class="small">Cliente/Proveedor:</label>
+<div class="field"><%= f.collection_select :client_id, @clients, :id, :to_collection_select, {:include_blank => true}, class: 'chosen-select chzn-field-normal' %> <span>*</span></div>
+<label for="driver_id" class="small">Chofer:</label>
+<div class="field"><%= f.collection_select :driver_id, @drivers, :id, :to_collection_select, {:include_blank => true}, class: 'chosen-select chzn-field-normal' %> <span>*</span></div>
+<label for="truck_id" class="small">Camión:</label>
+<div class="field"><%= f.collection_select :truck_id, @trucks, :id, :to_collection_select, {:include_blank => true}, class: 'chosen-select chzn-field-normal' %> <span>*</span></div>
+
+<label for="incoming_weight" class="small">Peso de entrada:</label>
+<div class="field"><%= f.text_field :incoming_weight, :size=>'20' %><span>*</span></div>
+
+
+<div class="clearfix"></div>
+<br/><span class="required">* Campos obligatorios</span>
+<br/>
+<% end %>

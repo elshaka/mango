@@ -81,11 +81,32 @@ class TicketsController < ApplicationController
   def create
     @ticket = Ticket.new params[:ticket]
     @ticket.incoming_date = Time.now
-    respond_to do |format|
-      format.json do
-        @ticket.save
-        render json: @ticket.errors
-      end
+    if @ticket.save
+      flash[:notice] = 'Ticket guardado con éxito'
+      redirect_to :tickets
+    else
+      new
+      render :new
+    end
+  end
+
+  def new
+    @clients = Client.all
+    @drivers = Driver.where(frequent: true)
+    @trucks = Truck.includes(:carrier).where(frequent: true)
+  end
+
+  def edit
+    @ticket = Ticket.find params[:id], :include => :transactions
+    @lots = Lot.includes(:ingredient).where(active: true)
+    @clients = Client.all
+    @drivers = Driver.where(frequent: true)
+    unless @ticket.driver.frequent
+      @drivers << @ticket.driver
+    end
+    @trucks = Truck.includes(:carrier).where(frequent: true)
+    unless @ticket.truck.frequent
+      @trucks << @ticket.truck
     end
   end
 

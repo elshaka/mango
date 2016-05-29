@@ -193,6 +193,10 @@ module MenuHelper
       menu = menu_for_trucks_edit
     elsif c == 'tickets' and a == 'index'
       menu = menu_for_tickets_index
+    elsif c == 'tickets' and (a == 'new' or a == 'create')
+      menu = menu_for_tickets_new
+    elsif c == 'tickets' and (a == 'edit' or a == 'update')
+      menu = menu_for_tickets_edit
     elsif c == 'tickets' and (a == 'repair' or a == 'do_repair')
       menu = menu_for_tickets_repair
     elsif c == 'alarm_types' and a == 'index'
@@ -1071,7 +1075,8 @@ module MenuHelper
   def menu_for_tickets_index
     menu = content_tag(:p, 'Tickets')
     menu += content_tag(:ul,
-      render_back(root_path)
+      render_back(root_path) +
+      render_action('Crear', 'Crear nuevo ticket', new_ticket_path, 'button-add.png')
     )
     return menu
   end
@@ -1081,6 +1086,15 @@ module MenuHelper
     menu += content_tag(:ul,
       render_back(tickets_path) +
       render_function('Guardar', 'Guardar ticket', "submit_ticket_new_form()", 'button-execute.png')
+    )
+    return menu
+  end
+
+  def menu_for_tickets_edit
+    menu = content_tag(:p, 'Editar ticket')
+    menu += content_tag(:ul,
+      render_back(tickets_path) +
+      render_function('Actualizar', 'Actualizar ticket', "submit_ticket_edit_form()", 'button-execute.png')
     )
     return menu
   end

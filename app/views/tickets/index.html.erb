@@ -29,6 +29,7 @@
         <td>
           <% if t[:ticket_open] %>
             <%= render_action_delete(ticket_path(t[:ticket_id]), "Desea borrar el ticket '#{t[:ticket_number]}'?") %>
+            <%= render_action_edit(edit_ticket_path(t[:ticket_id])) %> <br />
           <% else %>
             <%= render_action_repair(repair_ticket_path(t[:ticket_id])) %> <br />
             <% if !t[:ticket_notified] %>
